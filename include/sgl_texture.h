@@ -18,7 +18,7 @@ void sglDeleteTexture(SGLtexture texture);
 
 SGLtexture sglLoadTexture(const char *path);
 
-void sglBindTexture(uint index, SGLtexture texture);
+void sglBindTexture(uint index, SGLtexture *texture);
 
 #endif
 

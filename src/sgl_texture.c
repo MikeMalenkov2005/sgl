@@ -3,7 +3,7 @@
 #include <glad/glad.h>
 #include <stb_image.h>
 
-GLuint current;
+static GLuint current;
 
 SGLtexture sglCreateTexture(
     int width, int height, int channels, const uchar* pixels)
@@ -26,7 +26,9 @@ SGLtexture sglCreateTexture(
           width, height, 0, lut2[channels], GL_UNSIGNED_BYTE, pixels);
       glBindTexture(GL_TEXTURE_2D, current);
     }
+    else fprintf(stderr, ERR"Failed to create a texture!\n");
   }
+  else fprintf(stderr, ERR"Invalid texture arguments!\n");
   return texture;
 }
 
@@ -51,10 +53,14 @@ SGLtexture sglLoadTexture(const char *path)
     }
     fclose(file);
   }
+  if (!texture._id)
+  {
+    fprintf(stderr, ERR "Failed to load texture from '%s'!\n", path);
+  }
   return texture;
 }
 
-void sglBindTexture(uint index, SGLtexture texture)
+void sglBindTexture(uint index, SGLtexture *texture)
 {
   static GLint max;
   if (index)
@@ -63,10 +69,10 @@ void sglBindTexture(uint index, SGLtexture texture)
     if ((uint)max > index)
     {
       glActiveTexture(GL_TEXTURE0 + index);
-      glBindTexture(GL_TEXTURE_2D, texture._id);
+      glBindTexture(GL_TEXTURE_2D, texture ? texture->_id : 0);
       glActiveTexture(GL_TEXTURE0);
     }
   }
-  else glBindTexture(GL_TEXTURE_2D, current = texture._id);
+  else glBindTexture(GL_TEXTURE_2D, current = texture ? texture->_id : 0);
 }
 

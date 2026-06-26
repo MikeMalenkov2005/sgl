@@ -16,4 +16,7 @@ else()
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include> $<INSTALL_INTERFACE:include>
     PRIVATE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/external/stb>
   )
+  target_compile_definitions(${PROJECT_NAME}
+    PUBLIC _CRT_SECURE_NO_WARNINGS _USE_MATH_DEFINES
+  )
 endif()
