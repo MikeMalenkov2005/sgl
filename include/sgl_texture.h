@@ -14,11 +14,11 @@ typedef struct _SGLtexture
 SGLtexture sglCreateTexture(
     int width, int height, int channels, const uchar* pixels);
 
-void sglDeleteTexture(SGLtexture texture);
+void sglDeleteTexture(SGLtexture *texture);
 
 SGLtexture sglLoadTexture(const char *path);
 
-void sglBindTexture(uint index, SGLtexture *texture);
+void sglBindTexture(uint index, const SGLtexture *texture);
 
 #endif
 

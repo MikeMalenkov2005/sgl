@@ -1,5 +1,7 @@
 #include <sgl.h>
 
+#include "sgl_gui_internal.h"
+
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
@@ -34,7 +36,7 @@ static void __sgl_glfwFramebufferSizeCallback(
 static void __sgl_glfwScrollCallback(GLFWwindow *window, double dx, double dy)
 {
   (void)window;
-  if (on_scroll) on_scroll(dx, dy);
+  if (!__sglScrollGUI(dx, dy) && on_scroll) on_scroll(dx, dy);
 }
 
 static void __sgl_glfwKeyCallback(
@@ -42,7 +44,10 @@ static void __sgl_glfwKeyCallback(
 {
   (void)window;
   (void)scancode;
-  if (on_button) on_button(key, action, mods);
+  if (action != GLFW_PRESS || !__sglPressGUI(key, mods))
+  {
+    if (on_button) on_button(key, action, mods);
+  }
 }
 
 static void __sgl_glfwMouseButtonCallback(
@@ -86,6 +91,11 @@ bool sglInitWindow(int width, int height, const char *title)
     fprintf(stderr, ERR"Failed to load OpenGL 3.2!\n");
     goto error;
   }
+  if (!__sglInitGUI())
+  {
+    fprintf(stderr, ERR"Failed to initialize GUI!\n");
+    goto error;
+  }
   glfwSetFramebufferSizeCallback(window, __sgl_glfwFramebufferSizeCallback);
   glfwSetMouseButtonCallback(window, __sgl_glfwMouseButtonCallback);
   glfwSetCursorPosCallback(window, __sgl_glfwCursorPosCallback);
@@ -111,10 +121,12 @@ void sglLoopWindow(void)
     time = glfwGetTime();
     if (on_update) on_update(time - old_time);
     if (on_render) on_render();
+    __sglRenderGUI();
     glfwSwapBuffers(window);
     glfwPollEvents();
     old_time = time;
   }
+  __sglFreeGUI();
   X = Y = 0;
   W = H = 0;
   flags = 0;
@@ -193,13 +205,13 @@ bool sglGetCursorEnabled(void)
   return !(flags & __F_CURSOR);
 }
 
-void sglGetCursor(int *x, int *y)
+void sglGetCursor(double *x, double *y)
 {
   if (x) *x = X;
   if (y) *y = Y;
 }
 
-void sglSetCursor(int x, int y)
+void sglSetCursor(double x, double y)
 {
   if (window) glfwSetCursorPos(window, X = x, Y = y);
 }

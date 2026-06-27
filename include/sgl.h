@@ -11,6 +11,7 @@
 #include "sgl_buttons.h"
 #include "sgl_texture.h"
 #include "sgl_shader.h"
+#include "sgl_mesh.h"
 
 #include "sgl_gui.h"
 
@@ -23,6 +24,14 @@
 FILE *__sgl_win32_fopen(const char *filename, const char *mode);
 #define fopen __sgl_win32_fopen
 #endif
+
+#define sglColor(r, g, b, a)  \
+  (((a) << 24) | ((r) << 16) | ((g) << 8) | ((b) << 0))
+
+#define sglGetColorR(color) (((color) >> 16) & 255)
+#define sglGetColorG(color) (((color) >>  8) & 255)
+#define sglGetColorB(color) (((color) >>  0) & 255)
+#define sglGetColorA(color) (((color) >> 24) & 255)
 
 /* SGL window functions */
 
@@ -46,8 +55,8 @@ void sglSetVSync(bool vsync);
 bool sglGetCursorEnabled(void);
 void sglSetCursorEnabled(bool enabled);
 
-void sglGetCursor(int *x, int *y);
-void sglSetCursor(int x, int y);
+void sglGetCursor(double *x, double *y);
+void sglSetCursor(double x, double y);
 
 bool sglGetButton(int button);
 

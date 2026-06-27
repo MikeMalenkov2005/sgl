@@ -3,6 +3,8 @@
 #include <glad/glad.h>
 #include <stb_image.h>
 
+#include <string.h>
+
 static GLuint current;
 
 SGLtexture sglCreateTexture(
@@ -32,10 +34,11 @@ SGLtexture sglCreateTexture(
   return texture;
 }
 
-void sglDeleteTexture(SGLtexture texture)
+void sglDeleteTexture(SGLtexture *texture)
 {
-  if (current == texture._id) current = 0;
-  glDeleteTextures(1, &texture._id);
+  if (current == texture->_id) current = 0;
+  glDeleteTextures(1, &texture->_id);
+  memset(texture, 0, sizeof(*texture));
 }
 
 SGLtexture sglLoadTexture(const char *path)
@@ -60,7 +63,7 @@ SGLtexture sglLoadTexture(const char *path)
   return texture;
 }
 
-void sglBindTexture(uint index, SGLtexture *texture)
+void sglBindTexture(uint index, const SGLtexture *texture)
 {
   static GLint max;
   if (index)
