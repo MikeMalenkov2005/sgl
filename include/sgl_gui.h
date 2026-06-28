@@ -20,6 +20,8 @@ typedef struct _SGLsprite
   int   color;
 } SGLsprite;
 
+bool sglIsPointInRect(const SGLrect *rect, double x, double y);
+
 void (*sglGetGUI(void))(void);
 void sglSetGUI(void (*gui)(void));
 
@@ -37,6 +39,8 @@ bool sglIsPressingGUI(const SGLrect *rect, int button);
 bool sglIsScrollingGUI(const SGLrect *rect, double *dx, double *dy);
 
 void sglSpriteGUI(const SGLrect *rect, const SGLsprite *sprite);
+
+int sglGetPressedButtonForGUI(const SGLrect *rect);
 
 #endif
 

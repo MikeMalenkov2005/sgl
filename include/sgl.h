@@ -40,6 +40,8 @@ void sglLoopWindow(void);
 
 void sglCloseWindow(void);
 
+void sglSetWindowColor(int color);
+
 void sglSetWindowSizeLimits(
     int min_width, int min_height, int max_width, int max_height);
 

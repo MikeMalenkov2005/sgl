@@ -109,9 +109,9 @@ uint sglBindProgram(uint program)
   return previous;
 }
 
-int sglGetAttributeIndex(uint program, const char *name)
+void sglSetAttributeIndex(uint program, const char *name, uint index)
 {
-  return glGetAttribLocation(program, name);
+  glBindAttribLocation(program, index, name);
 }
 
 int sglGetUniformIndex(uint program, const char *name)

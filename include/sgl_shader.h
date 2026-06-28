@@ -20,7 +20,7 @@ uint sglLoadSimpleProgram(const char *vert_path, const char *frag_path);
 
 uint sglBindProgram(uint program);
 
-int sglGetAttributeIndex(uint program, const char *name);
+void sglSetAttributeIndex(uint program, const char *name, uint index);
 
 int sglGetUniformIndex(uint program, const char *name);
 

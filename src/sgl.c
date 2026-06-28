@@ -96,6 +96,11 @@ bool sglInitWindow(int width, int height, const char *title)
     fprintf(stderr, ERR"Failed to initialize GUI!\n");
     goto error;
   }
+  glEnable(GL_BLEND);
+  glEnable(GL_CULL_FACE);
+  glEnable(GL_DEPTH_TEST);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  glDepthFunc(GL_LEQUAL);
   glfwSetFramebufferSizeCallback(window, __sgl_glfwFramebufferSizeCallback);
   glfwSetMouseButtonCallback(window, __sgl_glfwMouseButtonCallback);
   glfwSetCursorPosCallback(window, __sgl_glfwCursorPosCallback);
@@ -120,6 +125,7 @@ void sglLoopWindow(void)
   {
     time = glfwGetTime();
     if (on_update) on_update(time - old_time);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     if (on_render) on_render();
     __sglRenderGUI();
     glfwSwapBuffers(window);
@@ -142,6 +148,15 @@ void sglLoopWindow(void)
 void sglCloseWindow(void)
 {
   if (window) glfwSetWindowShouldClose(window, GLFW_TRUE);
+}
+
+void sglSetWindowColor(int color)
+{
+  if (window) glClearColor(
+      sglGetColorR(color) / 255.0,
+      sglGetColorG(color) / 255.0,
+      sglGetColorB(color) / 255.0,
+      sglGetColorA(color) / 255.0);
 }
 
 void sglSetWindowSizeLimits(

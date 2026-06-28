@@ -95,6 +95,9 @@ bool __sglInitGUI(void)
   sglDeleteShader(frag);
   if (program)
   {
+    sglSetAttributeIndex(program, "a_offset", 0);
+    sglSetAttributeIndex(program, "a_value", 1);
+    sglSetAttributeIndex(program, "a_color", 2);
     u_window = sglGetUniformIndex(program, "u_window");
     u_texture = sglGetUniformIndex(program, "u_texture");
     u_sampler = sglGetUniformIndex(program, "u_sampler");
@@ -170,6 +173,13 @@ bool __sglScrollGUI(double dx, double dy)
   return false;
 }
 
+bool sglIsPointInRect(const SGLrect *rect, double x, double y)
+{
+  return !rect ||
+    ((rect->width  <= 0 || (x >= rect->x && x <= rect->x + rect->width)) &&
+     (rect->height <= 0 || (y >= rect->y && y <= rect->y + rect->height)));
+}
+
 void (*sglGetGUI(void))(void)
 {
   return GUI;
@@ -216,16 +226,12 @@ void sglGetCursorForGUI(double *x, double *y)
 
 bool sglIsHoveringGUI(const SGLrect *rect)
 {
-  return
-    (rect->width  <= 0 || (X >= rect->x && X < rect->x + rect->width)) &&
-    (rect->height <= 0 || (Y >= rect->y && Y < rect->y + rect->height));
+  return sglIsPointInRect(rect, X, Y);
 }
 
 bool sglIsDraggingGUI(const SGLrect *rect)
 {
-  return (flags & __F_DRAGGING) &&
-    (rect->width  <= 0 || (DX >= rect->x && DX < rect->x + rect->width)) &&
-    (rect->height <= 0 || (DY >= rect->y && DY < rect->y + rect->height));
+  return (flags & __F_DRAGGING) && sglIsPointInRect(rect, DX, DY);
 }
 
 bool sglIsPressingGUI(const SGLrect *rect, int button)
@@ -252,7 +258,7 @@ bool sglIsScrollingGUI(const SGLrect *rect, double *dx, double *dy)
 
 void sglSpriteGUI(const SGLrect *rect, const SGLsprite *sprite)
 {
-  if (!(flags & __F_TEXTURED)) return;
+  if (!rect || !sprite || !(flags & __F_TEXTURED)) return;
   if (vertex_count == __BUFLEN) __sglFlushGUI();
   vertex_buffer[vertex_count].x = rect->x * scale;
   vertex_buffer[vertex_count].y = rect->y * scale;
@@ -266,7 +272,7 @@ void sglSpriteGUI(const SGLrect *rect, const SGLsprite *sprite)
   vertex_buffer[vertex_count].x = rect->x * scale;
   vertex_buffer[vertex_count].y = (rect->y + rect->height) * scale;
   vertex_buffer[vertex_count].u = sprite->x_offset;
-  vertex_buffer[vertex_count].v = sprite->y_offset + sprite->height;
+  vertex_buffer[vertex_count].v = sprite->y_offset + sprite->height - 1;
   vertex_buffer[vertex_count].r = sglGetColorR(sprite->color);
   vertex_buffer[vertex_count].g = sglGetColorG(sprite->color);
   vertex_buffer[vertex_count].b = sglGetColorB(sprite->color);
@@ -274,8 +280,8 @@ void sglSpriteGUI(const SGLrect *rect, const SGLsprite *sprite)
   ++vertex_count;
   vertex_buffer[vertex_count].x = (rect->x + rect->width) * scale;
   vertex_buffer[vertex_count].y = (rect->y + rect->height) * scale;
-  vertex_buffer[vertex_count].u = sprite->x_offset + sprite->width;
-  vertex_buffer[vertex_count].v = sprite->y_offset + sprite->height;
+  vertex_buffer[vertex_count].u = sprite->x_offset + sprite->width - 1;
+  vertex_buffer[vertex_count].v = sprite->y_offset + sprite->height - 1;
   vertex_buffer[vertex_count].r = sglGetColorR(sprite->color);
   vertex_buffer[vertex_count].g = sglGetColorG(sprite->color);
   vertex_buffer[vertex_count].b = sglGetColorB(sprite->color);
@@ -292,8 +298,8 @@ void sglSpriteGUI(const SGLrect *rect, const SGLsprite *sprite)
   ++vertex_count;
   vertex_buffer[vertex_count].x = (rect->x + rect->width) * scale;
   vertex_buffer[vertex_count].y = (rect->y + rect->height) * scale;
-  vertex_buffer[vertex_count].u = sprite->x_offset + sprite->width;
-  vertex_buffer[vertex_count].v = sprite->y_offset + sprite->height;
+  vertex_buffer[vertex_count].u = sprite->x_offset + sprite->width - 1;
+  vertex_buffer[vertex_count].v = sprite->y_offset + sprite->height - 1;
   vertex_buffer[vertex_count].r = sglGetColorR(sprite->color);
   vertex_buffer[vertex_count].g = sglGetColorG(sprite->color);
   vertex_buffer[vertex_count].b = sglGetColorB(sprite->color);
@@ -301,12 +307,23 @@ void sglSpriteGUI(const SGLrect *rect, const SGLsprite *sprite)
   ++vertex_count;
   vertex_buffer[vertex_count].x = (rect->x + rect->width) * scale;
   vertex_buffer[vertex_count].y = rect->y * scale;
-  vertex_buffer[vertex_count].u = sprite->x_offset + sprite->width;
+  vertex_buffer[vertex_count].u = sprite->x_offset + sprite->width - 1;
   vertex_buffer[vertex_count].v = sprite->y_offset;
   vertex_buffer[vertex_count].r = sglGetColorR(sprite->color);
   vertex_buffer[vertex_count].g = sglGetColorG(sprite->color);
   vertex_buffer[vertex_count].b = sglGetColorB(sprite->color);
   vertex_buffer[vertex_count].a = sglGetColorA(sprite->color);
   ++vertex_count;
+}
+
+int sglGetPressedButtonForGUI(const SGLrect *rect)
+{
+  int result = 0;
+  if (pressing && sglIsHoveringGUI(rect))
+  {
+    result = pressing;
+    pressing = 0;
+  }
+  return result;
 }
 

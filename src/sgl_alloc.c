@@ -5,16 +5,23 @@
 
 static SGLallocator _allocator;
 static size_t _blocks;
+static bool _valid;
 
 const SGLallocator *sglGetAllocator(void)
 {
-  return &_allocator;
+  return _valid ? &_allocator : NULL;
 }
 
 bool sglSetAllocator(const SGLallocator *allocator)
 {
   if (_blocks) return false;
-  if (allocator) _allocator = *allocator;
+  if (allocator)
+  {
+    if (!allocator->allocate ||
+        !allocator->reallocate ||
+        !allocator->deallocate) return false;
+    _allocator = *allocator;
+  }
   else memset(&_allocator, 0, sizeof(_allocator));
   return true;
 }

@@ -24,8 +24,10 @@ SGLtexture sglCreateTexture(
       texture.height = height;
       texture.channels = channels;
       glBindTexture(GL_TEXTURE_2D, texture._id);
-      glTexImage2D(GL_TEXTURE_2D, 0, lut1[channels],
-          width, height, 0, lut2[channels], GL_UNSIGNED_BYTE, pixels);
+      glTexImage2D(GL_TEXTURE_2D, 0, lut1[channels - 1],
+          width, height, 0, lut2[channels - 1], GL_UNSIGNED_BYTE, pixels);
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
       glBindTexture(GL_TEXTURE_2D, current);
     }
     else fprintf(stderr, ERR"Failed to create a texture!\n");
@@ -65,7 +67,7 @@ SGLtexture sglLoadTexture(const char *path)
 
 void sglBindTexture(uint index, const SGLtexture *texture)
 {
-  static GLint max;
+  static int max;
   if (index)
   {
     if (!max) glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &max);
@@ -77,5 +79,15 @@ void sglBindTexture(uint index, const SGLtexture *texture)
     }
   }
   else glBindTexture(GL_TEXTURE_2D, current = texture ? texture->_id : 0);
+}
+
+void sglSetTextureFilter(const SGLtexture *texture, bool filter)
+{
+  if (texture->_id != current) glBindTexture(GL_TEXTURE_2D, texture->_id);
+  glTexParameteri(GL_TEXTURE_2D,
+      GL_TEXTURE_MIN_FILTER, filter ? GL_LINEAR : GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D,
+      GL_TEXTURE_MAG_FILTER, filter ? GL_LINEAR : GL_NEAREST);
+  if (texture->_id != current) glBindTexture(GL_TEXTURE_2D, current);
 }
 

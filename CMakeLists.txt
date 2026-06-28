@@ -6,8 +6,8 @@ set(CMAKE_C_STANDARD 90)
 if (TARGET ${PROJECT_NAME})
   message(WARNING "${PROJECT_NAME} is included twice!")
 else()
-  add_subdirectory("external/glad" EXCLUDE_FROM_ALL);
-  add_subdirectory("external/glfw" EXCLUDE_FROM_ALL);
+  add_subdirectory("external/glad" EXCLUDE_FROM_ALL)
+  add_subdirectory("external/glfw" EXCLUDE_FROM_ALL)
 
   file(GLOB SGL_SOURCES "src/*.c")
   add_library(${PROJECT_NAME} STATIC ${SGL_SOURCES})

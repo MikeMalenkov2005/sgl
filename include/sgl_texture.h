@@ -20,5 +20,7 @@ SGLtexture sglLoadTexture(const char *path);
 
 void sglBindTexture(uint index, const SGLtexture *texture);
 
+void sglSetTextureFilter(const SGLtexture *texture, bool filter);
+
 #endif
 
