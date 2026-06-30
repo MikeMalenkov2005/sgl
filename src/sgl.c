@@ -15,6 +15,7 @@
 static double X, Y;
 static int W, H, flags;
 static GLFWwindow *window;
+static void (*on_close)(void);
 static void (*on_render)(void);
 static void (*on_update)(double delta);
 static void (*on_scroll)(double dx, double dy);
@@ -127,16 +128,20 @@ void sglLoopWindow(void)
     if (on_update) on_update(time - old_time);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     if (on_render) on_render();
+    glClear(GL_DEPTH_BUFFER_BIT);
     __sglRenderGUI();
     glfwSwapBuffers(window);
     glfwPollEvents();
     old_time = time;
   }
   __sglFreeGUI();
+  if (on_close) on_close();
+  glfwDestroyWindow(window);
   X = Y = 0;
   W = H = 0;
   flags = 0;
   window = NULL;
+  on_close = NULL;
   on_render = NULL;
   on_update = NULL;
   on_scroll = NULL;
@@ -249,6 +254,11 @@ void sglSetCursorEnabled(bool enabled)
         enabled ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED);
     flags ^= __F_CURSOR;
   }
+}
+
+void sglSetCloseCallback(void (*callback)(void))
+{
+  if (window) on_close = callback;
 }
 
 void sglSetRenderCallback(void (*callback)(void))

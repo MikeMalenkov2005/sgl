@@ -62,6 +62,7 @@ void sglSetCursor(double x, double y);
 
 bool sglGetButton(int button);
 
+void sglSetCloseCallback(void (*callback)(void));
 void sglSetRenderCallback(void (*callback)(void));
 void sglSetUpdateCallback(void (*callback)(double delta));
 void sglSetScrollCallback(void (*callback)(double dx, double dy));
