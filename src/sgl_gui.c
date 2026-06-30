@@ -2,6 +2,8 @@
 
 #include "sgl_gui_internal.h"
 
+#include <string.h>
+
 static uint program;
 static SGLmesh mesh;
 static int u_window, u_texture, u_sampler;
@@ -11,6 +13,8 @@ static void (*GUI)(void);
 static double X, Y, SX, SY, DX, DY;
 static int flags, pressing, pressing_mods;
 static uint current, scale = 1;
+
+static SGLfont _font;
 
 #define __F_RENDERING 0x01
 #define __F_DRAGGING  0x02
@@ -117,6 +121,7 @@ bool __sglInitGUI(void)
 
 void __sglFreeGUI(void)
 {
+  sglSetFont(NULL);
   sglDeleteMesh(&mesh);
   sglDeleteProgram(program);
   DX = DY = SX = SY = 0;
@@ -325,5 +330,106 @@ int sglGetPressedButtonForGUI(const SGLrect *rect)
     pressing = 0;
   }
   return result;
+}
+
+const SGLfont *sglGetFont(void)
+{
+  return &_font;
+}
+
+bool sglSetFont(const SGLfont *font)
+{
+  if (!program) return false;
+  if (font)
+  {
+    if (!font->texture_width ||
+        !font->texture_height ||
+        !font->glyph_width ||
+        !font->texture_height ||
+        !font->get_glyph ||
+        !(font->texture_width / font->glyph_width)) return false;
+    _font = *font;
+  }
+  else memset(&_font, 0, sizeof(_font));
+  return true;
+}
+
+void sglGlyphGUI(const SGLrect *rect, int codepoint, int color)
+{
+  uint row;
+  uint glyph;
+  SGLsprite sprite;
+  if (_font.get_glyph && sglTextureGUI(
+        _font.texture_index, _font.texture_width, _font.texture_height))
+  {
+    row = _font.texture_width / _font.glyph_width;
+    glyph = _font.get_glyph(codepoint);
+    sprite.x_offset = (glyph % row) * _font.glyph_width;
+    sprite.y_offset = (glyph / row) * _font.glyph_height;
+    sprite.width = _font.glyph_width;
+    sprite.height = _font.glyph_height;
+    sprite.color = color;
+    sglSpriteGUI(rect, &sprite);
+  }
+}
+
+static int __sglNextCodepoint(const char **text)
+{
+  int result, left, ch = *(*text)++ & 0xFF;
+  if (!(ch & 0x80)) return ch;
+  else if (!(ch & 0x40)) return -1;
+  else if (!(ch & 0x20))
+  {
+    result = ch & 0x1F;
+    left = 1;
+  }
+  else if (!(ch & 0x10))
+  {
+    result = ch & 0x0F;
+    left = 2;
+  }
+  else if (!(ch & 0x08))
+  {
+    result = ch & 0x07;
+    left = 3;
+  }
+  else return -1;
+  while (left--)
+  {
+    ch = **text & 0xFF;
+    if ((ch & 0xC0) != 0x80) return -1;
+    result = (result << 6) | (ch & 0x3F);
+    ++*text;
+  }
+  return result;
+}
+
+void sglFlatTextGUI(double x, double y, const char *text, int color)
+{
+  SGLrect rect;
+  int codepoint;
+  if (!(flags & __F_RENDERING) || !text || !_font.get_glyph) return;
+  rect.x = x;
+  rect.y = y;
+  rect.width = _font.glyph_width;
+  rect.height = _font.glyph_height;
+  while ((codepoint = __sglNextCodepoint(&text)))
+  {
+    sglGlyphGUI(&rect, codepoint, color);
+    rect.x += rect.width;
+  }
+}
+
+void sglGetTextRect(SGLrect *rect, double x, double y, const char *text)
+{
+  if (!rect) return;
+  rect->x = x;
+  rect->y = y;
+  rect->width = 0;
+  rect->height = 0;
+  if (!text) return;
+  rect->height = _font.glyph_height;
+  if (!_font.glyph_width) return;
+  while (__sglNextCodepoint(&text)) rect->width += _font.glyph_width;
 }
 

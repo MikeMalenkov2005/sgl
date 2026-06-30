@@ -20,6 +20,16 @@ typedef struct _SGLsprite
   int   color;
 } SGLsprite;
 
+typedef struct _SGLfont
+{
+  uint  texture_index;
+  uint  texture_width;
+  uint  texture_height;
+  ushrt glyph_width;
+  ushrt glyph_height;
+  uint  (*get_glyph)(int codepoint);
+} SGLfont;
+
 bool sglIsPointInRect(const SGLrect *rect, double x, double y);
 
 void (*sglGetGUI(void))(void);
@@ -41,6 +51,15 @@ bool sglIsScrollingGUI(const SGLrect *rect, double *dx, double *dy);
 void sglSpriteGUI(const SGLrect *rect, const SGLsprite *sprite);
 
 int sglGetPressedButtonForGUI(const SGLrect *rect);
+
+const SGLfont *sglGetFont(void);
+bool sglSetFont(const SGLfont *font);
+
+void sglGlyphGUI(const SGLrect *rect, int codepoint, int color);
+
+void sglFlatTextGUI(double x, double y, const char *text, int color);
+
+void sglGetTextRect(SGLrect *rect, double x, double y, const char *text);
 
 #endif
 
