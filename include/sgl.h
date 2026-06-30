@@ -65,6 +65,7 @@ bool sglGetButton(int button);
 void sglSetCloseCallback(void (*callback)(void));
 void sglSetRenderCallback(void (*callback)(void));
 void sglSetUpdateCallback(void (*callback)(double delta));
+void sglSetTypingCallback(void (*callback)(int codepoint));
 void sglSetScrollCallback(void (*callback)(double dx, double dy));
 void sglSetButtonCallback(void (*callback)(int button, int action, int mods));
 void sglSetCursorCallback(
