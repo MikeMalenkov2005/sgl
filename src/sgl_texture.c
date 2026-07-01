@@ -38,9 +38,12 @@ SGLtexture sglCreateTexture(
 
 void sglDeleteTexture(SGLtexture *texture)
 {
-  if (current == texture->_id) current = 0;
-  glDeleteTextures(1, &texture->_id);
-  memset(texture, 0, sizeof(*texture));
+  if (texture)
+  {
+    if (current == texture->_id) current = 0;
+    glDeleteTextures(1, &texture->_id);
+    memset(texture, 0, sizeof(*texture));
+  }
 }
 
 SGLtexture sglLoadTexture(const char *path)
