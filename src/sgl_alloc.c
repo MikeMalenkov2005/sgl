@@ -43,6 +43,6 @@ void sglDeallocate(void *block)
 {
   --_blocks;
   if (!_allocator.deallocate) free(block);
-  _allocator.deallocate(block, _allocator.user);
+  else _allocator.deallocate(block, _allocator.user);
 }
 
