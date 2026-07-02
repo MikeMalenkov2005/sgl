@@ -206,6 +206,8 @@ void sglSetFullscreen(bool fullscreen)
     {
       if (!monitor && !(monitor = glfwGetPrimaryMonitor())) return;
       if (!vidmode && !(vidmode = glfwGetVideoMode(monitor))) return;
+      glfwGetWindowPos(window, &x, &y);
+      glfwGetWindowSize(window, &w, &h);
       glfwSetWindowMonitor(window, monitor,
           0, 0, vidmode->width, vidmode->height, vidmode->refreshRate);
     }
