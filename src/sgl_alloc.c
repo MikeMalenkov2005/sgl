@@ -28,20 +28,24 @@ bool sglSetAllocator(const SGLallocator *allocator)
 
 void *sglAllocate(size_t size)
 {
-  ++_blocks;
-  if (!_allocator.allocate) return malloc(size);
-  return _allocator.allocate(size, _allocator.user);
+  void *block;
+  if (!_allocator.allocate) block = malloc(size);
+  else block = _allocator.allocate(size, _allocator.user);
+  if (block) ++_blocks;
+  return block;
 }
 
 void *sglReallocate(void *block, size_t size)
 {
+  if (!block) return sglAllocate(size);
+  if (!size) return sglDeallocate(block), NULL;
   if (!_allocator.reallocate) return realloc(block, size);
   return _allocator.reallocate(block, size, _allocator.user);
 }
 
 void sglDeallocate(void *block)
 {
-  --_blocks;
+  if (block) --_blocks;
   if (!_allocator.deallocate) free(block);
   else _allocator.deallocate(block, _allocator.user);
 }
