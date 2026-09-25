@@ -1,7 +1,132 @@
 #include <sgl.h>
 
 #include <math.h>
-#include <string.h>
+
+SGLvec2 sglVec2(double x, double y)
+{
+  SGLvec2 vec;
+  vec.x = x;
+  vec.y = y;
+  return vec;
+}
+
+SGLvec3 sglVec3(double x, double y, double z)
+{
+  SGLvec3 vec;
+  vec.x = x;
+  vec.y = y;
+  vec.z = z;
+  return vec;
+}
+
+SGLvec4 sglVec4(double x, double y, double z, double w)
+{
+  SGLvec4 vec;
+  vec.x = x;
+  vec.y = y;
+  vec.z = z;
+  vec.w = w;
+  return vec;
+}
+
+SGLvec2 sglAddVec2(SGLvec2 a, SGLvec2 b)
+{
+  return sglVec2(a.x + b.x, a.y + b.y);
+}
+
+SGLvec3 sglAddVec3(SGLvec3 a, SGLvec3 b)
+{
+  return sglVec3(a.x + b.x, a.y + b.y, a.z + b.z);
+}
+
+SGLvec4 sglAddVec4(SGLvec4 a, SGLvec4 b)
+{
+  return sglVec4(a.x + b.x, a.y + b.y, a.z + b.z, a.w + b.w);
+}
+
+SGLvec2 sglSubVec2(SGLvec2 a, SGLvec2 b)
+{
+  return sglVec2(a.x - b.x, a.y - b.y);
+}
+
+SGLvec3 sglSubVec3(SGLvec3 a, SGLvec3 b)
+{
+  return sglVec3(a.x - b.x, a.y - b.y, a.z - b.z);
+}
+
+SGLvec4 sglSubVec4(SGLvec4 a, SGLvec4 b)
+{
+  return sglVec4(a.x - b.x, a.y - b.y, a.z - b.z, a.w - b.w);
+}
+
+SGLvec2 sglMulVec2(SGLvec2 a, SGLvec2 b)
+{
+  return sglVec2(a.x * b.x, a.y * b.y);
+}
+
+SGLvec3 sglMulVec3(SGLvec3 a, SGLvec3 b)
+{
+  return sglVec3(a.x * b.x, a.y * b.y, a.z * b.z);
+}
+
+SGLvec4 sglMulVec4(SGLvec4 a, SGLvec4 b)
+{
+  return sglVec4(a.x * b.x, a.y * b.y, a.z * b.z, a.w * b.w);
+}
+
+SGLvec2 sglDivVec2(SGLvec2 a, SGLvec2 b)
+{
+  return sglVec2(a.x / b.x, a.y / b.y);
+}
+
+SGLvec3 sglDivVec3(SGLvec3 a, SGLvec3 b)
+{
+  return sglVec3(a.x / b.x, a.y / b.y, a.z / b.z);
+}
+
+SGLvec4 sglDivVec4(SGLvec4 a, SGLvec4 b)
+{
+  return sglVec4(a.x / b.x, a.y / b.y, a.z / b.z, a.w / b.w);
+}
+
+double sglDotVec2(SGLvec2 a, SGLvec2 b)
+{
+  return a.x * b.x + a.y * b.y;
+}
+
+double sglDotVec3(SGLvec3 a, SGLvec3 b)
+{
+  return a.x * b.x + a.y * b.y + a.z * b.z;
+}
+
+double sglDotVec4(SGLvec4 a, SGLvec4 b)
+{
+  return a.x * b.x + a.y * b.y + a.z * b.z + a.w * b.w;
+}
+
+SGLvec2 sglScaleVec2(SGLvec2 vec, double scale)
+{
+  vec.x *= scale;
+  vec.y *= scale;
+  return vec;
+}
+
+SGLvec3 sglScaleVec3(SGLvec3 vec, double scale)
+{
+  vec.x *= scale;
+  vec.y *= scale;
+  vec.z *= scale;
+  return vec;
+}
+
+SGLvec4 sglScaleVec4(SGLvec4 vec, double scale)
+{
+  vec.x *= scale;
+  vec.y *= scale;
+  vec.z *= scale;
+  vec.w *= scale;
+  return vec;
+}
 
 void sglInitIdentityMatrix(SGLmatrix *matrix)
 {
