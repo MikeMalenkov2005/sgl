@@ -374,7 +374,7 @@ void sglGlyphGUI(double x, double y, int codepoint, int color)
   if (_font.get_glyph && sglTextureGUI(
         _font.texture_index, _font.texture_width, _font.texture_height))
   {
-    if (!_font.get_glyph(&glyph, codepoint)) glyph = _font.default_glyph;
+    glyph = _font.get_glyph(codepoint);
     __sglGlyphGUI(x, y, &glyph, color);
   }
 }
@@ -419,7 +419,7 @@ void sglFlatTextGUI(double x, double y, const char *text, int color)
   {
     while ((codepoint = __sglNextCodepoint(&text)))
     {
-      if (!_font.get_glyph(&glyph, codepoint)) glyph = _font.default_glyph;
+      glyph = _font.get_glyph(codepoint);
       __sglGlyphGUI(x, y, &glyph, color);
       x += glyph.x_shift + glyph.width;
     }
@@ -438,7 +438,7 @@ void sglGetTextRect(SGLrect *rect, double x, double y, const char *text)
     rect->height = 0;
     if (text && _font.get_glyph) while ((codepoint = __sglNextCodepoint(&text)))
     {
-      if (!_font.get_glyph(&glyph, codepoint)) glyph = _font.default_glyph;
+      glyph = _font.get_glyph(codepoint);
       if (x + glyph.x_shift < rect->x) rect->x = x + glyph.x_shift;
       if (y + glyph.y_shift < rect->y) rect->y = y + glyph.y_shift;
       if (x + glyph.x_shift + glyph.width > rect->x + rect->width)

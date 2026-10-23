@@ -32,11 +32,11 @@ typedef struct _SGLglyph
 
 typedef struct _SGLfont
 {
+  uint      flags;
   uint      texture_index;
   uint      texture_width;
   uint      texture_height;
-  SGLglyph  default_glyph;
-  bool      (*get_glyph)(SGLglyph *glyph, int codepoint);
+  SGLglyph  (*get_glyph)(int codepoint);
 } SGLfont;
 
 bool sglIsPointInRect(const SGLrect *rect, double x, double y);
