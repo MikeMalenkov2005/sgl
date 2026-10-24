@@ -31,8 +31,7 @@ static void __sgl_glfwErrorCallback(int code, const char *message)
 static void __sgl_glfwFramebufferSizeCallback(
     GLFWwindow *window, int width, int height)
 {
-  if (height < 1) glfwSetWindowSize(window, width, 1);
-  else glViewport(0, 0, W = width, H = height);
+  if (height > 0) glViewport(0, 0, W = width, H = height);
 }
 
 static void __sgl_glfwCharCallback(GLFWwindow *window, uint codepoint)
@@ -212,7 +211,7 @@ void sglSetFullscreen(bool fullscreen)
           0, 0, vidmode->width, vidmode->height, vidmode->refreshRate);
     }
     else glfwSetWindowMonitor(window, NULL, x, y, w, h, GLFW_DONT_CARE);
-    flags ^= 1;
+    flags ^= __F_FULLSCREEN;
   }
 }
 
