@@ -178,6 +178,17 @@ bool __sglScrollGUI(double dx, double dy)
   return false;
 }
 
+void sglPivotRect(SGLrect *rect, uint pivot)
+{
+  double width, height;
+  if (!(pivot & 0xF)) return;
+  sglGetWindowSizeForGUI(&width, &height);
+  if (pivot & SGL_PIVOT_CENTERED_X) rect->x += (width - rect->width) / 2;
+  if (pivot & SGL_PIVOT_CENTERED_Y) rect->y += (height - rect->height) / 2;
+  if (pivot & SGL_PIVOT_REVERSED_X) rect->x = width - rect->x - rect->width;
+  if (pivot & SGL_PIVOT_REVERSED_Y) rect->y = height - rect->y - rect->height;
+}
+
 bool sglIsPointInRect(const SGLrect *rect, double x, double y)
 {
   return !rect ||

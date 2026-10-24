@@ -39,6 +39,13 @@ typedef struct _SGLfont
   SGLglyph  (*get_glyph)(int codepoint);
 } SGLfont;
 
+#define SGL_PIVOT_CENTERED_X  0x1
+#define SGL_PIVOT_CENTERED_Y  0x2
+#define SGL_PIVOT_REVERSED_X  0x4
+#define SGL_PIVOT_REVERSED_Y  0x8
+
+void sglPivotRect(SGLrect *rect, uint pivot);
+
 bool sglIsPointInRect(const SGLrect *rect, double x, double y);
 
 void (*sglGetGUI(void))(void);
