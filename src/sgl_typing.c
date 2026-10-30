@@ -123,12 +123,30 @@ void sglTypeSpecialButton(int button, int mods)
     sglTypeCodepoint(0x7F);
     break;
   case SGLB_KEY_RIGHT:
-    t_selection -= ((mods & SGLB_MOD_SHIFT) && t_buffer[t_index]);
-    __sglTypeRight();
+    if (mods & SGLB_MOD_SHIFT)
+    {
+      t_selection -= !!t_buffer[t_index];
+      __sglTypeRight();
+    }
+    else
+    {
+      if (t_selection > 0) t_index += t_selection;
+      else __sglTypeRight();
+      t_selection = 0;
+    }
     break;
   case SGLB_KEY_LEFT:
-    t_selection += ((mods & SGLB_MOD_SHIFT) && t_index);
-    __sglTypeLeft();
+    if (mods & SGLB_MOD_SHIFT)
+    {
+      t_selection += !!t_index;
+      __sglTypeLeft();
+    }
+    else
+    {
+      if (t_selection < 0) t_index += t_selection;
+      else __sglTypeLeft();
+      t_selection = 0;
+    }
     break;
   }
 }
