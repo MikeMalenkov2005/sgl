@@ -14,6 +14,7 @@
 #include "sgl_mesh.h"
 
 #include "sgl_gui.h"
+#include "sgl_typing.h"
 
 #define ERR "\x1b[91mERROR: \x1b[0m"
 #define WRN "\x1b[93mWARNING: \x1b[0m"
@@ -65,11 +66,13 @@ bool sglGetButton(int button);
 void sglSetCloseCallback(void (*callback)(void));
 void sglSetRenderCallback(void (*callback)(void));
 void sglSetUpdateCallback(void (*callback)(double delta));
-void sglSetTypingCallback(void (*callback)(int codepoint));
 void sglSetScrollCallback(void (*callback)(double dx, double dy));
 void sglSetButtonCallback(void (*callback)(int button, int action, int mods));
 void sglSetCursorCallback(
     void (*callback)(double x, double y, double dx, double dy));
+
+void        sglSetClipboardString(const char *string);
+const char *sglGetClipboardString(void);
 
 #endif
 

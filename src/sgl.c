@@ -18,7 +18,6 @@ static GLFWwindow *window;
 static void (*on_close)(void);
 static void (*on_render)(void);
 static void (*on_update)(double delta);
-static void (*on_typing)(int codepoint);
 static void (*on_scroll)(double dx, double dy);
 static void (*on_button)(int button, int action, int mods);
 static void (*on_cursor)(double x, double y, double dx, double dy);
@@ -31,13 +30,14 @@ static void __sgl_glfwErrorCallback(int code, const char *message)
 static void __sgl_glfwFramebufferSizeCallback(
     GLFWwindow *window, int width, int height)
 {
+  (void)window;
   if (height > 0) glViewport(0, 0, W = width, H = height);
 }
 
 static void __sgl_glfwCharCallback(GLFWwindow *window, uint codepoint)
 {
   (void)window;
-  if (on_typing) on_typing(codepoint);
+  sglTypeCodepoint(codepoint);
 }
 
 static void __sgl_glfwScrollCallback(GLFWwindow *window, double dx, double dy)
@@ -55,6 +55,7 @@ static void __sgl_glfwKeyCallback(
   {
     if (on_button) on_button(key, action, mods);
   }
+  if (action) sglTypeSpecialButton(key, mods);
 }
 
 static void __sgl_glfwMouseButtonCallback(
@@ -280,11 +281,6 @@ void sglSetUpdateCallback(void (*callback)(double delta))
   if (window) on_update = callback;
 }
 
-void sglSetTypingCallback(void (*callback)(int codepoint))
-{
-  if (window) on_typing = callback;
-}
-
 void sglSetScrollCallback(void (*callback)(double dx, double dy))
 {
   if (window) on_scroll = callback;
@@ -298,6 +294,16 @@ void sglSetButtonCallback(void (*callback)(int button, int action, int mods))
 void sglSetCursorCallback(
     void (*callback)(double x, double y, double dx, double dy))
 {
-if (window) on_cursor = callback;
+  if (window) on_cursor = callback;
+}
+
+void sglSetClipboardString(const char *string)
+{
+  if (window) glfwSetClipboardString(window, string);
+}
+
+const char *sglGetClipboardString(void)
+{
+  return window ? glfwGetClipboardString(window) : NULL;
 }
 
