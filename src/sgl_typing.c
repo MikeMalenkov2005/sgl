@@ -46,7 +46,7 @@ static void __sglDeleteTypingSelection(void)
 
 static void __sglTypeString(const char *string)
 {
-  size_t i = strlen(string) - 1;
+  size_t i = strlen(string);
   size_t selection = t_selection < 0 ? -t_selection : t_selection;
   if (selection > i || (t_limit > i && !t_buffer[t_limit + selection - i]))
   {
